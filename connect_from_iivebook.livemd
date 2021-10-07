@@ -1,0 +1,8 @@
+# Remote Connect Test
+
+## Access data
+
+```elixir
+require Logger
+Logger.info("Testing logger")
+```
