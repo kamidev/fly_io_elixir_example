@@ -10,7 +10,8 @@ defmodule HelloElixir.MixProject do
       compilers: [:gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -66,6 +67,15 @@ defmodule HelloElixir.MixProject do
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.deploy": ["esbuild default --minify", "phx.digest"]
+    ]
+  end
+
+  defp releases() do
+    [
+      hello_elixir: [
+        include_executables_for: [:unix],
+        cookie: "rl2nhk-CLMONgtgnSBzIDsNEHtnhyliN2lPNWYw2SfAYg2mHa07l1Q=="
+      ]
     ]
   end
 end
