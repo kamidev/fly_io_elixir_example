@@ -18,10 +18,12 @@
     ## community tools can also be disabled
     # {:sobelow, false},
     # {:doctor, false},
-    # {:credo, false},
 
     ## ...or have command & args adjusted (e.g. enable skip comments for sobelow)
     # {:sobelow, "mix sobelow --exit --skip"},
+    {:credo, "mix credo --format oneline"},
+    {:sobelow, "mix sobelow --config"},
+    {:dial, "mix credo --format oneline"}
 
     ## ...or reordered (e.g. to see output from dialyzer before others)
     # {:dialyzer, order: -1},
