@@ -9,7 +9,8 @@
   min_overall_spec_coverage: 0,
   moduledoc_required: true,
   raise: false,
-  reporter: Doctor.Reporters.Full,
+  reporter: Doctor.Reporters.Summary,
+  # catch errors in generated Phoenix auth.gen files if true
   struct_type_spec_required: false,
   umbrella: false
 }
