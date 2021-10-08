@@ -52,7 +52,13 @@ defmodule HelloElixir.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:vega_lite, "~> 0.1.0"},
-      {:kino, "~> 0.3.0"}
+      {:kino, "~> 0.3.0"},
+      {:ex_check, "~> 0.14.0", only: [:dev], runtime: false},
+      {:credo, ">= 0.0.0", only: [:dev], runtime: false},
+      {:dialyxir, ">= 0.0.0", only: [:dev], runtime: false},
+      {:doctor, ">= 0.0.0", only: [:dev], runtime: false},
+      {:ex_doc, ">= 0.0.0", only: [:dev], runtime: false},
+      {:sobelow, ">= 0.0.0", only: [:dev], runtime: false}
     ]
   end
 
