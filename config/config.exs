@@ -10,11 +10,6 @@ import Config
 config :hello_elixir,
   ecto_repos: [HelloElixir.Repo]
 
-# Configure crypto algorithm to use less memory
-# This is less secure, see
-# https://elixirforum.com/t/staging-environment-how-to-debug-out-of-memory-errors-in-production-on-fly-io/42763/5
-config :argon2_elixir, t_cost: 4, m_cost: 15
-
 # Configures the endpoint
 config :hello_elixir, HelloElixirWeb.Endpoint,
   url: [host: "localhost"],

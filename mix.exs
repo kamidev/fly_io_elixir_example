@@ -34,8 +34,8 @@ defmodule HelloElixir.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-      {:argon2_elixir, "~> 2.0"},
-      {:phoenix, "~> 1.6.1"},
+      {:bcrypt_elixir, "~> 2.0"},
+      {:phoenix, "~> 1.6.2"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.6"},
       {:postgrex, ">= 0.0.0"},
