@@ -1,14 +1,14 @@
-# fly.toml file generated for nameless-star-7529 on 2021-10-06T22:18:31+02:00
+# fly.toml file generated for new app
 
-app = "nameless-star-7529"
+# app = "app name not saved in Git. Deploy using parameter '-a <app_name>'"
 
 kill_signal = "SIGTERM"
 kill_timeout = 5
 
-[env]
-
 [deploy]
   release_command = "/app/bin/hello_elixir eval HelloElixir.Release.migrate"
+
+[env]
 
 [[services]]
   internal_port = 4000
@@ -27,7 +27,7 @@ kill_timeout = 5
     port = 443
 
   [[services.tcp_checks]]
-    grace_period = "30s" # allow some time for startup
+    grace_period = "30s"
     interval = "15s"
     restart_limit = 6
     timeout = "2s"
