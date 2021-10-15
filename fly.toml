@@ -1,6 +1,6 @@
 # fly.toml file generated for new app
 
-# app = "app name not saved in Git. Deploy using parameter '-a <app_name>'"
+ app = "purple-flower-9868"
 
 kill_signal = "SIGTERM"
 kill_timeout = 5
