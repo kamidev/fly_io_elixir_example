@@ -1,75 +1,64 @@
-###
-### First Stage - Building the Release
-###
-FROM hexpm/elixir:1.12.3-erlang-24.1.2-alpine-3.14.2 AS build
+
+ARG MIX_ENV="prod"
+# Find eligible builder and runner images on Docker Hub
+# https://hub.docker.com/r/hexpm/elixir/tags?page=1&name=alpine
+# https://hub.docker.com/_/alpine?tab=tags
+ARG BUILDER_IMAGE="hexpm/elixir:1.12.3-erlang-24.1.2-alpine-3.14.2"
+ARG RUNNER_IMAGE="alpine:3.14.2"
+
+FROM ${BUILDER_IMAGE} as builder
 
 # install build dependencies
-RUN apk add --no-cache build-base npm
-
+RUN apk add --no-cache build-base git python3 curl
 # prepare build dir
 WORKDIR /app
 
 # extend hex timeout
 ENV HEX_HTTP_TIMEOUT=20
-
 # install hex + rebar
 RUN mix local.hex --force && \
   mix local.rebar --force
 
-# set build ENV as prod
-ENV MIX_ENV=prod
-ENV SECRET_KEY_BASE=nokey
+# set build ENV
+ARG MIX_ENV
+ENV MIX_ENV="${MIX_ENV}"
 
-# Copy over the mix.exs and mix.lock files to load the dependencies. If those
-# files don't change, then we don't keep re-fetching and rebuilding the deps.
+# install mix dependencies
 COPY mix.exs mix.lock ./
-COPY config config
+RUN mix deps.get --only $MIX_ENV
+RUN mkdir config
 
-RUN mix deps.get --only prod && \
-  mix deps.compile
-
-# install npm dependencies
-# leave this out for esbuild-based Phoenix with no extra npm packages
-#COPY assets/package.json assets/package-lock.json ./assets/
-#RUN npm --prefix ./assets ci --progress=false --no-audit --loglevel=error
+# copy compile-time config files before we compile dependencies
+# to ensure any relevant config change will trigger the dependencies
+# to be re-compiled.
+COPY config/config.exs config/$MIX_ENV.exs config/
+RUN mix deps.compile
 
 COPY priv priv
 COPY assets assets
-
-# NOTE: If using TailwindCSS, it uses a special "purge" step and that requires
-# the code in `lib` to see what is being used. Uncomment that here before
-# running the npm deploy script if that's the case.
-# COPY lib lib
-
-# build assets
-RUN mix assets.deploy
-RUN mix phx.digest
-
-# copy source here if not using TailwindCSS
 COPY lib lib
+RUN mix assets.deploy
+# Compile the release
+RUN mix compile
 
-# compile and build release
+# Changes to config/runtime.exs don't require recompiling the code
+COPY config/runtime.exs config/
+# Copy our custom release configuration and build the release
 COPY rel rel
-RUN mix do compile, release
+RUN mix release
 
-###
-### Second Stage - Setup the Runtime Environment
-###
+# start a new build stage so that the final image will only contain
+# the compiled release and other runtime necessities
+FROM ${RUNNER_IMAGE}
 
-# prepare release docker image
-FROM alpine:3.14.2 AS app
-RUN apk add --no-cache libstdc++ openssl ncurses-libs
+WORKDIR "/app"
+RUN apk add --no-cache libstdc++ openssl ncurses-libs && chown nobody:nobody /app
 
-WORKDIR /app
-
-RUN chown nobody:nobody /app
-
+ARG MIX_ENV
 USER nobody:nobody
 
-COPY --from=build --chown=nobody:nobody /app/_build/prod/rel/hello_elixir ./
+COPY --from=builder --chown=nobody:nobody /app/_build/"${MIX_ENV}"/rel/hello_elixir ./
 
-ENV HOME=/app
-ENV MIX_ENV=prod
 ENV SECRET_KEY_BASE=nokey
 ENV PORT=4000
 
