@@ -1,7 +1,5 @@
 # fly.toml file generated for new app
 
- app = "purple-flower-9868"
-
 kill_signal = "SIGTERM"
 kill_timeout = 5
 
